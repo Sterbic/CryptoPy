@@ -1,4 +1,4 @@
-__author__ = 'Luka Sterbic'
+__author__ = "Luka Sterbic"
 
 
 def xor_strings(a, b):
@@ -10,10 +10,10 @@ def xor_strings(a, b):
     they are converted to ascii encoded strings.
     """
     if not isinstance(a, bytes):
-        a = a.encode('ascii')
+        a = a.encode("ascii")
 
     if not isinstance(b, bytes):
-        b = b.encode('ascii')
+        b = b.encode("ascii")
 
     length = min(len(a), len(b))
     string = []

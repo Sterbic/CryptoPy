@@ -6,7 +6,7 @@ messages. The last message in the file is assumed to be the target
 message for decryption. The script output a tentative decryption and
 some possibilities for the missing values.
 """
-__author__ = 'Luka Sterbic'
+__author__ = "Luka Sterbic"
 
 import sys
 import binascii
@@ -31,7 +31,7 @@ class EncryptedMsg(object):
         self.message = msg
 
     def __str__(self):
-        return self.title + ":\n" + self.message
+        return "%s:\n%s" % (self.title, self.message)
 
     @staticmethod
     def load(path):
@@ -39,7 +39,7 @@ class EncryptedMsg(object):
 
         with open(path) as file:
             while True:
-                title = file.readline().rstrip(':')
+                title = file.readline().rstrip(":\n")
                 msg = file.readline().rstrip()
 
                 if not title or not msg:
@@ -87,9 +87,9 @@ if __name__ == "__main__":
         if frequency >= THRESHOLD_SINGULAR:
             decrypted.append(most_frequent)
         elif frequency <= THRESHOLD_SPACE:
-            decrypted.append(' ')
+            decrypted.append(" ")
         else:
-            decrypted.append('#')
+            decrypted.append("#")
             non_singular.append(item)
 
     print("Decrypted message:")
