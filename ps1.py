@@ -1,5 +1,14 @@
+"""
+Solution to the first problem set
+
+The script expects one argument, the path to a file with the encrypted
+messages. The last message in the file is assumed to be the target
+message for decryption. The script output a tentative decryption and
+some possibilities for the missing values.
+"""
 __author__ = 'Luka Sterbic'
 
+import sys
 import binascii
 from utils import xor_strings
 
@@ -14,35 +23,39 @@ class EncryptedMsg(object):
     Checks for appropriate message type at construction time.
     Defines static method for loading messages from file.
     """
-    def __init__(self, title, message):
-        if not isinstance(message, bytes):
-            message = binascii.unhexlify(message)
+    def __init__(self, title, msg):
+        if not isinstance(msg, bytes):
+            msg = binascii.unhexlify(msg)
 
         self.title = title
-        self.message = message
+        self.message = msg
 
     def __str__(self):
         return self.title + ":\n" + self.message
 
     @staticmethod
     def load(path):
-        messages = []
+        msg_list = []
 
         with open(path) as file:
             while True:
                 title = file.readline().rstrip(':')
-                message = file.readline().rstrip()
+                msg = file.readline().rstrip()
 
-                if not title or not message:
+                if not title or not msg:
                     break
 
-                messages.append(EncryptedMsg(title, message))
+                msg_list.append(EncryptedMsg(title, msg))
                 file.readline()
 
-        return messages
+        return msg_list
 
 if __name__ == "__main__":
-    messages = EncryptedMsg.load("data/ps_1_messages.txt")
+    if len(sys.argv) != 2:
+        print("Usage: python3 ps1.py path_to_messages")
+        exit(1)
+
+    messages = EncryptedMsg.load(sys.argv[1])
     target = messages.pop()
 
     positions = {}
@@ -53,10 +66,10 @@ if __name__ == "__main__":
         for i in range(len(xor_msg)):
             char = xor_msg[i]
 
-            if (char >= 65 and char <= 90) or (char >= 97 and char <= 122):
-                list = positions.get(i, [])
-                list.append(chr(char).swapcase())
-                positions[i] = list
+            if (65 <= char <= 90) or (97 <= char <= 122):
+                char_list = positions.get(i, [])
+                char_list.append(chr(char).swapcase())
+                positions[i] = char_list
 
     decrypted = []
     non_singular = []
@@ -67,7 +80,6 @@ if __name__ == "__main__":
         for char in item[1]:
             count = char_counter.get(char, 0)
             char_counter[char] = count + 1
-
 
         most_frequent = max(char_counter, key=char_counter.get)
         frequency = char_counter[most_frequent] / len(item[1])
