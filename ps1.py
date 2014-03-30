@@ -10,7 +10,7 @@ __author__ = 'Luka Sterbic'
 
 import sys
 import binascii
-from utils import xor_strings
+from utils.functions import xor_strings
 
 THRESHOLD_SINGULAR = 0.65
 THRESHOLD_SPACE = 0.30
