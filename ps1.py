@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Solution to the first problem set
 
@@ -23,6 +25,7 @@ class EncryptedMsg(object):
     Checks for appropriate message type at construction time.
     Defines static method for loading messages from file.
     """
+
     def __init__(self, title, msg):
         if not isinstance(msg, bytes):
             msg = binascii.unhexlify(msg)
@@ -33,8 +36,8 @@ class EncryptedMsg(object):
     def __str__(self):
         return "%s:\n%s" % (self.title, self.message)
 
-    @staticmethod
-    def load(path):
+    @classmethod
+    def load(cls, path):
         msg_list = []
 
         with open(path) as file:
@@ -45,10 +48,11 @@ class EncryptedMsg(object):
                 if not title or not msg:
                     break
 
-                msg_list.append(EncryptedMsg(title, msg))
+                msg_list.append(cls(title, msg))
                 file.readline()
 
         return msg_list
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -74,15 +78,15 @@ if __name__ == "__main__":
     decrypted = []
     non_singular = []
 
-    for item in positions.items():
+    for position, values in positions.items():
         char_counter = {}
 
-        for char in item[1]:
+        for char in values:
             count = char_counter.get(char, 0)
             char_counter[char] = count + 1
 
         most_frequent = max(char_counter, key=char_counter.get)
-        frequency = char_counter[most_frequent] / len(item[1])
+        frequency = char_counter[most_frequent] / len(values)
 
         if frequency >= THRESHOLD_SINGULAR:
             decrypted.append(most_frequent)
@@ -90,9 +94,11 @@ if __name__ == "__main__":
             decrypted.append(" ")
         else:
             decrypted.append("#")
-            non_singular.append(item)
+            non_singular.append((position, values))
 
     print("Decrypted message:")
     print("".join(decrypted))
     print("\nMissing values: (#)")
-    [print(item) for item in non_singular]
+
+    for position, values in non_singular:
+        print("\t%4d: %s" % (position, values))
