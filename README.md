@@ -2,6 +2,7 @@ CryptoPy
 ========
 
 Python solutins to the Cryprography 1 Coursera class problem sets.
+Usage can be used by running the scripts `ps_{X}.py` without arguments.
 
 Problem sets:
 -------
