@@ -54,12 +54,8 @@ class EncryptedMsg(object):
         return msg_list
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python3 ps1.py path_to_messages")
-        exit(1)
-
-    messages = EncryptedMsg.load(sys.argv[1])
+def main(path):
+    messages = EncryptedMsg.load(path)
     target = messages.pop()
 
     positions = {}
@@ -102,3 +98,10 @@ if __name__ == "__main__":
 
     for position, values in non_singular:
         print("\t%4d: %s" % (position, values))
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python3 ps_1.py path_to_messages")
+        exit(1)
+
+    main(sys.argv[1])
