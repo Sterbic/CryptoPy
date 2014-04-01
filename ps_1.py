@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
 """
-Solution to the first problem set
+Solution to the first problem set.
 
 The script expects one argument, the path to a file with the encrypted
 messages. The last message in the file is assumed to be the target
 message for decryption. The script output a tentative decryption and
 some possibilities for the missing values.
+
+Usage:
+    python3 ps_1.py path
+
+Args:
+    path: the path to the encrypted messages
 """
 __author__ = "Luka Sterbic"
 
@@ -20,13 +26,19 @@ THRESHOLD_SPACE = 0.30
 
 class EncryptedMsg(object):
     """
-    Class modelling an encrypted message
+    Class modelling an encrypted message.
 
-    Checks for appropriate message type at construction time.
-    Defines static method for loading messages from file.
+    Class modeling a titled encrypted message. Appropriate message
+    type is checked at construction time. Defines a static method
+    for loading messages from file.
+
+    Attributes:
+        title: the title of the message
+        msg: the content of the message
     """
 
     def __init__(self, title, msg):
+        """Inits the class with a title and some content."""
         if not isinstance(msg, bytes):
             msg = binascii.unhexlify(msg)
 
@@ -34,10 +46,12 @@ class EncryptedMsg(object):
         self.message = msg
 
     def __str__(self):
+        """Returns the concatenated title and content."""
         return "%s:\n%s" % (self.title, self.message)
 
     @classmethod
     def load(cls, path):
+        """Load a list of messages from the given path."""
         msg_list = []
 
         with open(path) as file:
@@ -55,6 +69,17 @@ class EncryptedMsg(object):
 
 
 def main(path):
+    """
+    Main function of this script.
+
+    The main function expects as argument the path to a file containing
+    encrypted messages and assumes the last one should be decrypted.
+    The messages are loaded and an approximation of the target message
+    is given in linear time.
+
+    Args:
+        path: the path to the encrypted messages
+    """
     messages = EncryptedMsg.load(path)
     target = messages.pop()
 
@@ -101,7 +126,7 @@ def main(path):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python3 ps_1.py path_to_messages")
+        print(__doc__)
         exit(1)
 
     main(sys.argv[1])
