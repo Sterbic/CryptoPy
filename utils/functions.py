@@ -1,7 +1,8 @@
+"""Utility functions for cryptography."""
 __author__ = "Luka Sterbic"
 
 
-def xor_strings(a, b):
+def xor_strings(first, second):
     """
     XOR two strings.
 
@@ -11,23 +12,23 @@ def xor_strings(a, b):
     is of the same length as the shorter string between a and b.
 
     Args:
-        a: the first string
-        b: the second string
+        first: the first string
+        second: the second string
 
     Returns:
-        a bytes object representing XOR(a, b)
+        bytes object representing XOR(a, b)
     """
-    if not isinstance(a, bytes):
-        a = a.encode("ascii")
+    if not isinstance(first, bytes):
+        first = first.encode("ascii")
 
-    if not isinstance(b, bytes):
-        b = b.encode("ascii")
+    if not isinstance(second, bytes):
+        second = second.encode("ascii")
 
-    length = min(len(a), len(b))
+    length = min(len(first), len(second))
     string = []
 
     for i in range(length):
-        string.append(a[i] ^ b[i])
+        string.append(first[i] ^ second[i])
 
     return bytes(string)
 

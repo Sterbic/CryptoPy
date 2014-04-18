@@ -19,7 +19,7 @@ __author__ = "Luka Sterbic"
 import sys
 
 from utils.functions import xor_strings, extract_most_frequent
-from utils.messages import EncryptedMsg
+from utils.structs import EncryptedMsg
 
 THRESHOLD_SINGULAR = 0.65
 

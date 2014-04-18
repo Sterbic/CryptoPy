@@ -8,6 +8,7 @@ All scripts are developed for Python 3 and are tested on Python 3.3.5.
 
 ## Problem sets:
 
-- **ps_1**: Stream cipher breaking when a key is used more than once
+- **ps_1**: OTP cipher breaking when a key is used more than once
+- **ps_2**: AES decryption with CBC and CTR modes
 
 [1]: https://www.coursera.org/course/crypto "Crptography I"
