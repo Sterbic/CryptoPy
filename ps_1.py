@@ -160,6 +160,7 @@ def main(path):
     if missing:
         print("\nMissing key at indexes: %s" % ", ".join(missing))
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print(__doc__)
