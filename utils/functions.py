@@ -30,3 +30,28 @@ def xor_strings(a, b):
         string.append(a[i] ^ b[i])
 
     return bytes(string)
+
+
+def extract_most_frequent(char_list):
+    """
+    Find the most frequent character in a list.
+
+    Given a list of characters find the most frequent one and its
+    frequency of appearance.
+
+    Args:
+        char_list: a list of characters
+
+    Returns:
+        the most frequent character and its frequency
+    """
+    char_counter = {}
+
+    for char in char_list:
+        count = char_counter.get(char, 0)
+        char_counter[char] = count + 1
+
+    most_frequent = max(char_counter, key=char_counter.get)
+    frequency = char_counter[most_frequent] / len(char_list)
+
+    return most_frequent, frequency

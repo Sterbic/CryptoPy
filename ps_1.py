@@ -18,10 +18,9 @@ __author__ = "Luka Sterbic"
 
 import sys
 import binascii
-from utils.functions import xor_strings
+from utils.functions import xor_strings, extract_most_frequent
 
 THRESHOLD_SINGULAR = 0.65
-THRESHOLD_SPACE = 0.30
 
 
 class EncryptedMsg(object):
@@ -68,61 +67,98 @@ class EncryptedMsg(object):
         return msg_list
 
 
+def retrieve_otp_key(messages, length):
+    """
+    Retrieve the key from a set of otp encoded messages.
+
+    Given a set of messages encoded with the one time pad algorithm
+    and the expected length of the used key try to retrieve the key
+    using ascii xor properties.
+
+    Args:
+        messages: a set of otp encoded messages
+        length: the expected length of the key
+
+    Returns:
+        the key used to encode the given messages
+    """
+    key = {}
+
+    for target in messages:
+        positions = {}
+
+        for other in messages:
+            if target is other:
+                continue
+
+            xor_msg = xor_strings(target.message, other.message)
+
+            for i in range(length):
+                char = xor_msg[i]
+
+                if (65 <= char <= 90) or (97 <= char <= 122):
+                    char_list = positions.get(i, [])
+                    char_list.append(chr(char).swapcase())
+                    positions[i] = char_list
+
+        for position, values in positions.items():
+            most_frequent, frequency = extract_most_frequent(values)
+
+            if frequency >= THRESHOLD_SINGULAR:
+                key_char = target.message[position] ^ ord(most_frequent)
+                key_char_list = key.get(position, [])
+                key_char_list.append(key_char)
+                key[position] = key_char_list
+
+    delete = []
+
+    for position, values in key.items():
+        most_frequent, frequency = extract_most_frequent(values)
+
+        if frequency >= THRESHOLD_SINGULAR:
+            key[position] = most_frequent
+        else:
+            delete.append(position)
+
+    for position in delete:
+        del key[position]
+
+    return key
+
+
 def main(path):
     """
     Main function of this script.
 
     The main function expects as argument the path to a file containing
     encrypted messages and assumes the last one should be decrypted.
-    The messages are loaded and an approximation of the target message
-    is given in linear time.
+    The messages are loaded and an approximation of the opt key is
+    computed by pairwise xor-ing the given messages.
 
     Args:
         path: the path to the encrypted messages
     """
     messages = EncryptedMsg.load(path)
-    target = messages.pop()
+    target = messages[-1]
 
-    positions = {}
-
-    for message in messages:
-        xor_msg = xor_strings(target.message, message.message)
-
-        for i in range(len(xor_msg)):
-            char = xor_msg[i]
-
-            if (65 <= char <= 90) or (97 <= char <= 122):
-                char_list = positions.get(i, [])
-                char_list.append(chr(char).swapcase())
-                positions[i] = char_list
+    key = retrieve_otp_key(messages, len(target.message))
 
     decrypted = []
-    non_singular = []
+    missing = []
 
-    for position, values in positions.items():
-        char_counter = {}
-
-        for char in values:
-            count = char_counter.get(char, 0)
-            char_counter[char] = count + 1
-
-        most_frequent = max(char_counter, key=char_counter.get)
-        frequency = char_counter[most_frequent] / len(values)
-
-        if frequency >= THRESHOLD_SINGULAR:
-            decrypted.append(most_frequent)
-        elif frequency <= THRESHOLD_SPACE:
-            decrypted.append(" ")
+    for i in range(len(target.message)):
+        if i in key:
+            char = target.message[i] ^ key[i]
+            decrypted.append(chr(char))
         else:
             decrypted.append("#")
-            non_singular.append((position, values))
+            missing.append(str(i))
 
     print("Decrypted message:")
     print("".join(decrypted))
-    print("\nMissing values: (#)")
 
-    for position, values in non_singular:
-        print("\t%4d: %s" % (position, values))
+    if missing:
+        print("\nMissing key at indexes: %s" % ", ".join(missing))
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
