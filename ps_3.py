@@ -64,9 +64,9 @@ def main(input_path, output_path):
     hashes = list(reversed(hashes))
 
     with open(output_path, "w") as file:
-        for h in range(len(hashes)):
-            chunk_hash = binascii.hexlify(hashes[h]).decode("ascii")
-            print("h_%d: %s" % (h, chunk_hash), file=file)
+        for h_i in range(len(hashes)):
+            chunk_hash = binascii.hexlify(hashes[h_i]).decode("ascii")
+            print("h_%d: %s" % (h_i, chunk_hash), file=file)
 
 
 if __name__ == "__main__":
